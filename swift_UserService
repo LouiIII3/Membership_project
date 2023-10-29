@@ -1,0 +1,17 @@
+package com.example.demo.swift;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service("customUserService")
+public class UserService {
+    @Autowired
+    private UserRepository userRepository;
+
+    public User registerUser(User user) {
+        // 여기에서 필요한 유효성 검사 및 비밀번호 해싱 등의 로직을 수행할 수 있습니다.
+
+        // 사용자 정보를 데이터베이스에 저장
+        return userRepository.save(user);
+    }
+}
