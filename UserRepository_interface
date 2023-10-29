@@ -1,0 +1,7 @@
+package com.example.demo.swift;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+    // 사용자 관련 데이터베이스 작업을 정의할 수 있음
+}
