@@ -1,3 +1,13 @@
+package com.example.demo.swift;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+
 @RestController
 public class RegistrationController {
     @Autowired
@@ -5,18 +15,25 @@ public class RegistrationController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
+    public ResponseEntity<ErrorResponse> registerUser(@RequestBody User user) {
         String key = user.getKey1();
         String id = user.getUsername();
         String password = user.getPassword();
 
-        // 사용자 정보를 데이터베이스에 저장
-        User registeredUser = userService.registerUser(key, id, password);
+        try {
+            // 사용자 정보를 데이터베이스에 저장
+            User registeredUser = userService.registerUser(key, id, password);
 
-        if (registeredUser != null) {
-            return new ResponseEntity<>("Registration successful", HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Registration failed", HttpStatus.BAD_REQUEST);
+            if (registeredUser != null) {
+                // 등록 성공 시, 200 OK 응답 반환
+                return new ResponseEntity<>(new ErrorResponse(false, "Registration successful"), HttpStatus.OK);
+            } else {
+                 // 이미 key 값에 id와 비번이 존재하는경우 - 서버에서 요청을 처리할때 충돌을 일으킬 경우
+                return new ResponseEntity<>(new ErrorResponse(true, "The key has expired."), HttpStatus.CONFLICT);
+            }
+        } catch (Exception e) {
+            // 서버에서 예상치 못한 문제 (예외가 발생한 경우 ex-중복된 아이디로 실패한 경우, 오류 응답 반환)
+            return new ResponseEntity<>(new ErrorResponse(true, "Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -58,3 +75,5 @@ public class RegistrationController {
         }
     }
 }
+
+
