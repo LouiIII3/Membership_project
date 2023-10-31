@@ -1,27 +1,60 @@
-package com.example.demo.swift;
-
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
 @RestController
 public class RegistrationController {
     @Autowired
     private UserService userService;
 
+
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
+        String key = user.getKey1();
+        String id = user.getUsername();
+        String password = user.getPassword();
+
         // 사용자 정보를 데이터베이스에 저장
-        User registeredUser = userService.registerUser(user);
+        User registeredUser = userService.registerUser(key, id, password);
 
         if (registeredUser != null) {
             return new ResponseEntity<>("Registration successful", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Registration failed", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+    @PostMapping("/login")
+    public ResponseEntity<Long> login(@RequestBody UserLoginRequest loginRequest) {
+        String username = loginRequest.getUsername();
+        String password = loginRequest.getPassword();
+
+        User user = userService.findUserByUsernameAndPassword(username, password);
+        if (user != null) {
+            return new ResponseEntity<>(user.getId(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(-1L, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+    @Autowired
+    private UserRepository userRepository; // UserRepository 주입
+
+    @PostMapping("/storeKey")
+    public ResponseEntity<String> storeKey(@RequestBody User user) {
+        String key = user.getKey1(); // "key1" 값을 가져옴
+
+        if (key != null) {
+            // User 객체 생성 및 "key1" 설정
+            User userToSave = new User();
+            userToSave.setKey1(key);
+
+            // User 객체를 데이터베이스에 저장
+            userRepository.save(userToSave);
+
+            return ResponseEntity.ok("Key stored successfully");
+        } else {
+            return ResponseEntity.badRequest().body("Key is missing in the request");
         }
     }
 }
