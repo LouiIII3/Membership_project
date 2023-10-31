@@ -4,5 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
 public interface UserRepository extends CrudRepository<User, Long> {
-    // 사용자 관련 데이터베이스 작업을 정의할 수 있음
+    User findByUsername(String username);
+    User findBykey1(String key1);
 }
