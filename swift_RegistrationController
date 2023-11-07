@@ -13,6 +13,7 @@ public class RegistrationController {
     @Autowired
     private UserService userService;
 
+    //회원가입
     @PostMapping("/register")
     public ResponseEntity<ErrorResponse> registerUser(@RequestBody User user) {
         String key = user.getKey1();
@@ -25,34 +26,64 @@ public class RegistrationController {
 
             if (registeredUser != null) {
                 // 등록 성공 시, 200 OK 응답 반환
-                return new ResponseEntity<>(new ErrorResponse(false, "Registration successful"), HttpStatus.OK);
+                return new ResponseEntity<>(new ErrorResponse(false, "회원가입이 되었습니다."), HttpStatus.OK);
             } else {
                  // 이미 key 값에 id와 비번이 존재하는경우 - 서버에서 요청을 처리할때 충돌을 일으킬 경우
-                return new ResponseEntity<>(new ErrorResponse(true, "The key has expired."), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(new ErrorResponse(true, "만료된 키입니다."), HttpStatus.CONFLICT);
             }
         } catch (Exception e) {
             // 서버에서 예상치 못한 문제 (예외가 발생한 경우 ex-중복된 아이디로 실패한 경우, 오류 응답 반환)
-            return new ResponseEntity<>(new ErrorResponse(true, "Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ErrorResponse(true, "이미 있는 ID 입니다."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
 
-
+    //로그인
     @PostMapping("/login")
-    public ResponseEntity<Long> login(@RequestBody UserLoginRequest loginRequest) {
+    public ResponseEntity<ErrorResponse> login(@RequestBody UserLoginRequest loginRequest) {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
         User user = userService.findUserByUsernameAndPassword(username, password);
         if (user != null) {
-            return new ResponseEntity<>(user.getId(), HttpStatus.OK);
+            return new ResponseEntity<>(new ErrorResponse(false,"로그인 되었습니다."), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(-1L, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ErrorResponse(true, "로그인 실패"), HttpStatus.BAD_REQUEST);
         }
     }
 
+    //패스워드 수정
+    @PostMapping("/updatePassword")
+    public ResponseEntity<ErrorResponse> updatePassword(@RequestBody PasswordUpdateRequest passwordUpdateRequest) {
+        String username = passwordUpdateRequest.getUsername();
+        String currentPassword = passwordUpdateRequest.getCurrentPassword();
+        //패스워드를 2번입력하기 위해 새로운 패스워드와 확인용패스워들 만듬
+        String newPassword = passwordUpdateRequest.getNewPassword();
+        String confirmPassword = passwordUpdateRequest.getConfirmPassword();
 
+        // 현재 패스워드가 일치하는지 확인(로그인기능을 활용)
+        User user = userService.findUserByUsernameAndPassword(username, currentPassword);
+        if (user != null) {
+            if (newPassword.equals(confirmPassword)) {
+                try {
+                    boolean updated = userService.updatePassword(username, currentPassword, newPassword);
+                    if (updated) {
+                        return new ResponseEntity<>(new ErrorResponse(false, "패스워드가 성공적으로 변경되었습니다"), HttpStatus.OK);
+                    } else {
+                        return new ResponseEntity<>(new ErrorResponse(true, "패스워드 변경 실패"), HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                } catch (Exception e) {
+                    return new ResponseEntity<>(new ErrorResponse(true, "서버 오류 입니다. 재시도 해주세요"), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            } else {
+                return new ResponseEntity<>(new ErrorResponse(true, "새로운 패스워드와 확인용 패스워드가 일치하지 않습니다."), HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>(new ErrorResponse(true, "현재 패스워드가 올바르지 않습니다"), HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    //키 저장
     @Autowired
     private UserRepository userRepository; // UserRepository 주입
 
@@ -73,6 +104,9 @@ public class RegistrationController {
             return ResponseEntity.badRequest().body("Key is missing in the request");
         }
     }
+}
+
+
 }
 
 
