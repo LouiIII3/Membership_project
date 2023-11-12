@@ -1,0 +1,44 @@
+package com.example.demo.token;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.util.Date;
+
+@Component
+public class JwtTokenProvider {
+    private static final long EXPIRATION_TIME = 120_000; // 2 minutes
+    private final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+
+    public String generateToken(String username) {
+        Date now = new Date();
+        Date expirationDate = new Date(now.getTime() + EXPIRATION_TIME);
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(now)
+                .setExpiration(expirationDate)
+                .signWith(key)
+                .compact();
+    }
+
+    public String extractUsername(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return claims.getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true; // 예외가 발생하지 않으면 토큰이 유효함
+        } catch (ExpiredJwtException ex) {
+            return false; // 토큰이 만료된 경우
+        } catch (Exception e) {
+            return false; // 다른 예외 상황
+        }
+    }
+}
