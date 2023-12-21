@@ -35,7 +35,6 @@ public class RegistrationController {
         }
     }
 
-
     //로그인
     @PostMapping("/login")
     public ResponseEntity<ErrorResponse> login(@RequestBody UserLoginRequest loginRequest) {
