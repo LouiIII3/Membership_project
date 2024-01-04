@@ -2,7 +2,6 @@ package com.example.demo.swift;
 
 import lombok.Data;
 
-
 @Data
 public class ErrorResponse {
     private boolean error;
