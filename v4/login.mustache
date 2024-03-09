@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+</head>
+<body>
+<h2>Login Form</h2>
+<form id="loginForm">
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <button type="submit">Login</button>
+</form>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Get form data
+        const formData = new FormData(this);
+
+        // Convert form data to JSON object
+        const jsonObject = {};
+        formData.forEach((value, key) => {
+            jsonObject[key] = value;
+        });
+
+        // Send POST request to login endpoint with JSON content type
+        fetch("/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(jsonObject)
+        })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Parse JSON response
+                    } else {
+                        throw new Error("Login failed");
+                    }
+                })
+                .then(data => {
+                    console.log("Token:", data.token); // Print JWT token to console
+                    // You can handle the token as needed (e.g., store it in local storage, redirect to another page)
+                    alert("Login successful! Token: " + data.token);
+                })
+                .catch(error => {
+                    console.error("Login error:", error.message); // Log error
+                    alert("Login failed. Please check your username and password.");
+                });
+    });
+</script>
+</body>
+</html>
