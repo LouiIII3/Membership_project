@@ -8,7 +8,7 @@
 <h2>회원가입 project</h2>
 
 - <s>WebSecurityConfigurerAdapter를 상속하여 configure 메서드를 오버라이드 해서 사용하기(v0)</s>
-- 클라이언트 세션 유지를 Spring Boot와 JWT(JSON Web Token)로만 구현해보기(v1,v2,v3)
+- 클라이언트 세션 유지를 Spring Boot와 JWT(JSON Web Token)로만 구현해보기
 - Spring Security를 Security 6.2.1 버전을 이용하여 구현해보기
 - 기기에서의 사용자 식별을 위한 OAuth2.0 을 사용예정(구글)
 
@@ -34,13 +34,13 @@
 <br><br><br>
 <h2>Code modification date</h2>
 
-  - 2023.03.18: WebSecurityConfigurerAdapter를 상속하여 코드 구성<br>
-  - 2023.06.20: WebSecurityConfigurerAdapter is deprecated -> V0제거 <br>
+  - 2023.03.18: WebSecurityConfigurerAdapter를 상속하여 코드 구성 -> V0 버젼<br>
+  - 2023.06.20: WebSecurityConfigurerAdapter is deprecated 으로 인한 V0제거 <br>
   - 2023.08.12: SecurityFilterChain으로 등록하는 방식을 사용 해보기<br>
-  - 2023.10.26: SpringSecurity 없이 Spring Boot와 JWT(JSON Web Token)로만 간단한 로직 구현 -> V1
-  - 2023.11.18: V1에 컨트롤러 추가해보면서 해보기 -> V2
+  - 2023.10.26: SpringSecurity 없이 Spring Boot와 JWT(JSON Web Token)로만 간단한 로직 구현 -> V1 버젼
+  - 2023.11.18: V1에 컨트롤러 추가해보면서 해보기 -> V2 버젼
   - 2023.12.06: V2버전에 SecurityFilterChain을 등록해보며 사용해보기
-  - 2024.01.26: SpringSecurity 6 framework를 활용하여 JWT기반의 인증 인가 구현 -> V3
+  - 2024.01.26: SpringSecurity 6 framework를 활용하여 JWT기반의 인증 인가 구현 -> V3 버젼
   - 2024.03.06: OAuth2.0 인증방식을 구현해 보며 사용해보는중
  
 
