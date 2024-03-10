@@ -7,11 +7,13 @@
 
 <h2>회원가입 project</h2>
 
+  <h3>마침</h3>
+  
 - <s>WebSecurityConfigurerAdapter를 상속하여 configure 메서드를 오버라이드 해서 사용하기(v0)</s>
 - 클라이언트 세션 유지를 Spring Boot와 JWT(JSON Web Token)로만 구현해보기
 - Spring Security를 Security 6.2.1 버전을 이용하여 구현해보기
 
-  <h2>공부중</h2>
+  <h3>공부중</h3>
   
 - 커넥션풀 사용하여 정보 바로 가져오기 (Hikari사용예정)
 - 기기에서의 사용자 식별을 위한 OAuth2.0 을 사용예정(구글)
