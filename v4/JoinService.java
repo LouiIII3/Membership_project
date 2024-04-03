@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JoinService {
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
